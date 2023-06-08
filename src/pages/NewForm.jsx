@@ -1,30 +1,38 @@
+import "../assets/styles/newForm.scss";
+
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 
-// Store
-import { useSelector } from "react-redux";
-
-//Components
-import Header from "../components/Header/Header";
-
 //Assets
 import Background from "../assets/images/logo_transparent.png";
-import "../assets/styles/newForm.scss";
+//Components
+import Header from "../components/Header/Header";
 import { useNavigate } from "react-router-dom";
+// Store
+import { useSelector } from "react-redux";
 
 const NewForm = () => {
   // Variables
   const navigate = useNavigate();
-
-  // Get Form Id
   const form = useSelector((state) => state.form.form);
+  if (!form) {
+    navigate("/dashboard");
+  }
+
+  /* const inputTitle = prompt("Enter the form title:");
+    if (inputTitle) {
+      setFormTitle(inputTitle);
+    } */
+  // Get Form Id
+
+  console.log(form);
 
   const localStorageTokenKey = "token";
   const baseURL = "https://api.lightforms.co/api/services/forms";
 
   // States
   const [formElements, setFormElements] = useState([]);
-  const [check, setCheck] = useState([{questionOptions: []}]);
+  const [check, setCheck] = useState([{ questionOptions: [] }]);
   //const [formTitle, setFormTitle] = useState(" ");
 
   const handlePublish = (e) => {
@@ -96,7 +104,6 @@ const NewForm = () => {
 
   const deleteElement = async (questionId) => {
     // /api/services/forms/questions/{id} DELETE
-
     // const token = localStorage.getItem(localStorageTokenKey);
     // if (token) {
     //   const api = `${baseURL}/questions/${questionId}`;
@@ -112,31 +119,27 @@ const NewForm = () => {
     //     //   await getFormContent(headers, form.id);
     //     //   return response.json();
     //     // }
-
     //     // throw new Error("Something went wrong");
     //   });
     // }
   };
 
   const handleOptionChange = (index, event) => {
-
-
-      // const updatedElements = [...formElements];
-      // updatedElements[0].questionOptions[index] = event.target.value.split("\n").filter((option) => option.trim() !== "");;
-      // setFormElements(updatedElements);
-    
+    // const updatedElements = [...formElements];
+    // updatedElements[0].questionOptions[index] = event.target.value.split("\n").filter((option) => option.trim() !== "");;
+    // setFormElements(updatedElements);
 
     const updatedElements = [...formElements.questions[index].questionOptions];
     updatedElements[index] = {
       ...updatedElements[index],
-      questionOptions: event.target.value.split("\n").filter((option) => option.trim() !== "")
+      questionOptions: event.target.value
+        .split("\n")
+        .filter((option) => option.trim() !== ""),
     };
 
     setCheck(updatedElements);
-    formElements.questions[index].questionOptions= check[index].questionOptions
-    
-
-    
+    formElements.questions[index].questionOptions =
+      check[index].questionOptions;
 
     // const updatedElements = [...formElements.questions[0].questionOptions];
     // updatedElements[index] = {
@@ -153,24 +156,11 @@ const NewForm = () => {
     setFormElements([]);
   };
 
-  useEffect(() => {
-    if (!form.id) {
-      navigate("/dashboard");
-    }
-    /* const inputTitle = prompt("Enter the form title:");
-    if (inputTitle) {
-      setFormTitle(inputTitle);
-    } */
-  }, []);
-
   return (
     <>
       <Header isNewForm />
       <main id="newForm">
-        <div
-          id="newForm__left"
-          className="sidebar"
-        >
+        <div id="newForm__left" className="sidebar">
           <div className="formElementsList">
             <span>FORM ELEMENTS</span>
             <hr />
@@ -242,43 +232,25 @@ const NewForm = () => {
         </div>
 
         {/* Form Area */}
-        <div
-          id="newForm__right"
-          className="page-content"
-        >
+        <div id="newForm__right" className="page-content">
           {/* Page BG */}
           <div className="background">
-            <img
-              src={Background}
-              alt="bg"
-            />
+            <img src={Background} alt="bg" />
           </div>
           <div className="form-preview">
             <h2 className="formTitle">{/* {formTitle} */}Form Title</h2>
             <form className="newForm">
               {formElements?.questions?.map((element, index) => (
-                <div
-                  className="formElements"
-                  key={index}
-                >
+                <div className="formElements" key={index}>
                   <label className="formElementTitle">{element.title}</label>
                   {element.questionType === "text" && (
-                    <input
-                      type="text"
-                      name={element.name}
-                    />
+                    <input type="text" name={element.name} />
                   )}
                   {element.questionType === "email" && (
-                    <input
-                      type="email"
-                      name={element.name}
-                    />
+                    <input type="email" name={element.name} />
                   )}
                   {element.questionType === "tel" && (
-                    <input
-                      type="text"
-                      name={element.name}
-                    />
+                    <input type="text" name={element.name} />
                   )}
                   {element.questionType === "textarea" && (
                     <textarea name={element.name}></textarea>
@@ -298,7 +270,6 @@ const NewForm = () => {
                         placeholder="Enter options (one per line)"
                         onChange={(event) => handleOptionChange(index, event)}
                       ></textarea>
-                      
                     </div>
                   )}
                   {element.questionType === "radio" && (
@@ -327,10 +298,7 @@ const NewForm = () => {
                       <select>
                         {element.questionOptions &&
                           element.questionOptions.map((option, optionIndex) => (
-                            <option
-                              key={optionIndex}
-                              value={option}
-                            >
+                            <option key={optionIndex} value={option}>
                               {option}
                             </option>
                           ))}
